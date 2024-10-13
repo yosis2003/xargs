@@ -39,6 +39,7 @@ public class MyXargs {
             }
         }
 
+
         if (commandStart < 0) {
             System.err.println("Usage: java MyXargs.java [-n num] [-I replace] [-t] [-r] command");
             return;
@@ -61,13 +62,17 @@ public class MyXargs {
         int totalArgs = inputArgs.size();
         int iterations = replace != null ? totalArgs : (totalArgs + maxArgs - 1) / maxArgs;
 
+
         for (int argi = 0; argi < iterations; argi++) {
             List<String> execList = new ArrayList<>(cmdList);
 
             if (replace != null) {
                 for (int j = 0; j < execList.size(); j++) {
-                    if (execList.get(j).equals(replace)) {
-                        execList.set(j, inputArgs.get(argi));
+                    if (execList.get(j).contains(replace)) {
+                        String replacement = execList.get(j).replace(replace, inputArgs.get(argi));
+                        execList.set(j, replacement);
+                        System.out.println("execlist j " + inputArgs.get(argi));
+                        
                     }
                 }
             } else {

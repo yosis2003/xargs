@@ -1,2 +1,6 @@
 echo mrbean.txt guyfawkes.txt mugabe.txt brownie.txt linus.txt | java MyXargs.java -n 2 ls
 
+
+echo | java MyXargs.java -n 2 ls
+
+correct output : brownie.txt  guyfawkes.txt  linus.txt  mrbean.txt  mugabe.txt  MyXargs.java  possiblefixes.docx  README.md  realcommands.txt  renamer.txt  testcommands.txt  testerscript.sh
