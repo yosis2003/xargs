@@ -47,6 +47,12 @@ touch compareFile3.txt && echo "LMAO ZEDONG" > compareFile3.txt
 sleep 2
 echo compareFile0.txt compareFile1.txt compareFile2.txt compareFile3.txt | java MyXargs.java -n 2 diff 
 echo ====================================
+echo removing test files
 echo compareFile0 compareFile1 compareFile2 compareFile3 | java MyXargs.java -I {} rm {}.txt
-
+echo ====================================
+echo / | java MyXargs.java -r ls
+echo ====================================
+echo 1 | java MyXargs.java -r seq 1
+echo ====================================
+echo TESTSOVER!
 
