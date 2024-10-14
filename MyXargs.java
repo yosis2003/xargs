@@ -7,7 +7,7 @@ public class MyXargs {
         final int MAX_ARGS = 100;
         int maxArgs = MAX_ARGS;
         String replace = null;
-        boolean usesI = false, trace = false, noRunIfEmpty = false;
+        boolean trace = false, noRunIfEmpty = false;
         int commandStart = -1;
 
         // Parse options
@@ -21,7 +21,6 @@ public class MyXargs {
                 case "-I":
                     if (i + 1 < args.length) {
                         replace = args[++i];
-                        usesI = true;
                     }
                     break;
                 case "-t":
@@ -71,13 +70,16 @@ public class MyXargs {
                     if (execList.get(j).contains(replace)) {
                         String replacement = execList.get(j).replace(replace, inputArgs.get(argi));
                         execList.set(j, replacement);
-                        System.out.println("execlist j " + inputArgs.get(argi));
-                        
                     }
                 }
             } else {
                 for (int j = 0; j < maxArgs && (argi * maxArgs + j) < totalArgs; j++) {
-                    execList.add(inputArgs.get(argi * maxArgs + j));
+                    String indexedArgument = inputArgs.get(argi * maxArgs + j);
+                    if (!indexedArgument.trim().isEmpty())
+                    {
+                        execList.add(indexedArgument);
+                    }
+                    
                 }
             }
 
@@ -92,11 +94,14 @@ public class MyXargs {
             if (execList.isEmpty() && noRunIfEmpty) {
                 continue;
             }
+            
+
 
             ProcessBuilder pb = new ProcessBuilder(execList);
             pb.inheritIO();
             Process process = pb.start();
             process.waitFor();
         }
+        
     }
 }
