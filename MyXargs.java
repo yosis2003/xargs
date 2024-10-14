@@ -1,53 +1,94 @@
 import java.io.*;
 import java.util.*;
 
+class StringWrapper
+{
+    public String value;
+
+    public StringWrapper(String value)
+    {
+        this.value = value;
+    }
+}
+class IntegerWrapper
+{
+    public Integer value;
+
+    public IntegerWrapper(Integer value)
+    {
+        this.value = value;
+    }
+}
+class BooleanWrapper
+{
+    public Boolean value;
+
+    public BooleanWrapper(Boolean value)
+    {
+        this.value = value;
+    }
+}
+
+
 public class MyXargs {
 
-    public static void main(String[] args) throws IOException, InterruptedException {
-        final int MAX_ARGS = 100;
-        int maxArgs = MAX_ARGS;
-        String replace = null;
-        boolean trace = false, noRunIfEmpty = false;
-        int commandStart = -1;
 
-        // Parse options
+
+    public static void parseXargsOptions(String[] args, IntegerWrapper maxArgs, StringWrapper replace, BooleanWrapper trace, BooleanWrapper noRunIfEmpty, IntegerWrapper commandStart)
+    {
         for (int i = 0; i < args.length; i++) {
             switch (args[i]) {
                 case "-n":
                     if (i + 1 < args.length) {
-                        maxArgs = Integer.parseInt(args[++i]);
+                        maxArgs.value = Integer.parseInt(args[++i]);
                     }
                     break;
                 case "-I":
                     if (i + 1 < args.length) {
-                        replace = args[++i];
+                        replace.value = args[++i];
                     }
                     break;
                 case "-t":
-                    trace = true;
+                    trace.value = true;
                     break;
                 case "-r":
-                    noRunIfEmpty = true;
+                    noRunIfEmpty.value = true;
                     break;
                 default:
-                    commandStart = i;
+                    commandStart.value = i;
                     break;
             }
-            if (commandStart != -1) {
+            if (commandStart.value != -1) {
                 break;
             }
         }
 
+    }
 
-        if (commandStart < 0) {
+    public static void main(String[] args) throws IOException, InterruptedException {
+        final int MAX_ARGS = 100;
+        IntegerWrapper maxArgs = new IntegerWrapper(MAX_ARGS);
+        StringWrapper replace = new StringWrapper(null);
+        BooleanWrapper trace = new BooleanWrapper(false);
+        BooleanWrapper noRunIfEmpty = new BooleanWrapper(false);
+        IntegerWrapper commandStart = new IntegerWrapper(-1);
+
+        // Parse options
+
+        parseXargsOptions(args, maxArgs, replace, trace, noRunIfEmpty, commandStart);
+
+
+
+        if (commandStart.value < 0) {
             System.err.println("Usage: java MyXargs.java [-n num] [-I replace] [-t] [-r] command");
             return;
         }
 
         List<String> cmdList = new ArrayList<>();
-        for (int i = commandStart; i < args.length; i++) {
+        for (int i = commandStart.value; i < args.length; i++) {
             cmdList.add(args[i]);
         }
+        System.out.println(cmdList);
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         List<String> inputArgs = new ArrayList<>();
@@ -59,22 +100,22 @@ public class MyXargs {
         }
 
         int totalArgs = inputArgs.size();
-        int iterations = replace != null ? totalArgs : (totalArgs + maxArgs - 1) / maxArgs;
+        int iterations = replace.value != null ? totalArgs : (totalArgs + maxArgs.value - 1) / maxArgs.value;
 
 
         for (int argi = 0; argi < iterations; argi++) {
             List<String> execList = new ArrayList<>(cmdList);
 
-            if (replace != null) {
+            if (replace.value != null) {
                 for (int j = 0; j < execList.size(); j++) {
-                    if (execList.get(j).contains(replace)) {
-                        String replacement = execList.get(j).replace(replace, inputArgs.get(argi));
+                    if (execList.get(j).contains(replace.value)) {
+                        String replacement = execList.get(j).replace(replace.value, inputArgs.get(argi));
                         execList.set(j, replacement);
                     }
                 }
             } else {
-                for (int j = 0; j < maxArgs && (argi * maxArgs + j) < totalArgs; j++) {
-                    String indexedArgument = inputArgs.get(argi * maxArgs + j);
+                for (int j = 0; j < maxArgs.value && (argi * maxArgs.value + j) < totalArgs; j++) {
+                    String indexedArgument = inputArgs.get(argi * maxArgs.value + j);
                     if (!indexedArgument.trim().isEmpty())
                     {
                         execList.add(indexedArgument);
@@ -83,7 +124,7 @@ public class MyXargs {
                 }
             }
 
-            if (trace) {
+            if (trace.value) {
                 System.out.print("+");
                 for (String arg : execList) {
                     System.out.print(" " + arg);
@@ -91,7 +132,7 @@ public class MyXargs {
                 System.out.println();
             }
 
-            if (execList.isEmpty() && noRunIfEmpty) {
+            if (execList.isEmpty() && noRunIfEmpty.value) {
                 continue;
             }
             
